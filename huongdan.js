@@ -263,13 +263,20 @@
 
     // ===== OK -> RESET GAME + PHÁT NHẠC =====
     btnChoiLaiOk.addEventListener('click', function() {
-        choilaiModal.classList.remove('active');
-        if (typeof window.resetGame === 'function') {
-            window.resetGame();
-        }
-        // Phát nhạc nền trở lại khi reset game
-        playBgMusic();
-    });
+
+    choilaiModal.classList.remove('active');
+
+    if (typeof window.resetGame === 'function') {
+        window.resetGame();
+    }
+
+    // Khôi phục volume gốc
+    bgMusic.volume = 0.2;
+
+    // Phát nhạc lại
+    playBgMusic();
+
+});
 
     // ===== KHÔNG -> ĐÓNG MODAL =====
     btnChoiLaiKhong.addEventListener('click', function() {
@@ -285,13 +292,8 @@
     // ===== KÊU SỐ -> GIẢM NHẠC NỀN =====
 btnCall.addEventListener('click', function() {
 
-    // Giảm nhỏ nhạc nền khi đọc số
+    // Giảm nhỏ nhạc nền khi bắt đầu kêu số
     bgMusic.volume = 0.05;
-
-    // Sau 4 giây tăng lại volume
-    setTimeout(() => {
-        bgMusic.volume = 0.2;
-    }, 4000);
 
 });
 

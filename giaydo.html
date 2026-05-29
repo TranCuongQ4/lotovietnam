@@ -74,49 +74,59 @@
             
             const color = COLORS[Math.floor(Math.random() * COLORS.length)];
             
-            let allNumbers = Array.from({length: 90}, (_, i) => i + 1);
-            
-            for (let i = allNumbers.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [allNumbers[i], allNumbers[j]] = [allNumbers[j], allNumbers[i]];
+            // 1. Phân loại 90 số vào 9 cột tương ứng
+            let columns = Array.from({length: 9}, () => []);
+            for (let i = 1; i <= 90; i++) {
+                columns[getColumnIndex(i)].push(i);
             }
+            
+            // Xáo trộn các số bên trong từng cột
+            columns.forEach(col => {
+                for (let i = col.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [col[i], col[j]] = [col[j], col[i]];
+                }
+            });
             
             let rowData = [];
             
+            // 2. Tiến hành xếp số vào 18 hàng
             for (let row = 0; row < 18; row++) {
                 let rowNumbers = [];
-                let usedRanges = new Set();
                 
-                while (rowNumbers.length < 5) {
-                    let found = false;
-                    
-                    for (let i = 0; i < allNumbers.length; i++) {
-                        const num = allNumbers[i];
-                        const colIndex = getColumnIndex(num);
-                        
-                        if (!usedRanges.has(colIndex)) {
-                            rowNumbers.push({ num: num, col: colIndex });
-                            usedRanges.add(colIndex);
-                            allNumbers.splice(i, 1);
-                            found = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!found && allNumbers.length > 0) {
-                        const num = allNumbers.shift();
-                        const colIndex = getColumnIndex(num);
-                        rowNumbers.push({ num: num, col: colIndex });
-                        usedRanges.add(colIndex);
-                    }
-                    
-                    if (allNumbers.length === 0) break;
-                }
+                // Tạo danh sách các cột kèm theo số lượng số còn lại trong cột đó
+                let availableCols = columns.map((col, index) => ({
+                    index: index,
+                    count: col.length
+                })).filter(c => c.count > 0); // Chỉ lấy cột còn số
                 
+                // Sắp xếp cột giảm dần theo số lượng số còn lại để ưu tiên lấy cột nhiều số trước
+                // Nếu số lượng bằng nhau thì xáo trộn ngẫu nhiên để đảm bảo tính tự nhiên của Lô Tô
+                availableCols.sort((a, b) => {
+                    if (b.count !== a.count) {
+                        return b.count - a.count;
+                    }
+                    return Math.random() - 0.5;
+                });
+                
+                // Lấy ra 5 cột tối ưu nhất cho hàng này
+                let selectedCols = availableCols.slice(0, 5);
+                
+                // Rút số từ 5 cột đã chọn
+                selectedCols.forEach(c => {
+                    let num = columns[c.index].pop(); // Rút 1 số ra khỏi cột
+                    rowNumbers.push({
+                        num: num,
+                        col: c.index
+                    });
+                });
+                
+                // Sắp xếp các số trong hàng tăng dần theo thứ tự cột từ trái qua phải
                 rowNumbers.sort((a, b) => a.col - b.col);
                 rowData.push(rowNumbers);
             }
             
+            // 3. Phần hiển thị HTML (Giữ nguyên logic của bạn)
             for (let frame = 0; frame < 2; frame++) {
                 const frameDiv = document.createElement('div');
                 frameDiv.className = 'ticket-frame';

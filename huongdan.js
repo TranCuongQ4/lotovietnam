@@ -203,7 +203,7 @@
     // ===== NHẠC NỀN =====
     const bgMusic = new Audio('so/nenloto.mp3');
     bgMusic.loop = true;
-    bgMusic.volume = 0.5;
+    bgMusic.volume = 0.2;
     let isMusicPlaying = false;
 
     function playBgMusic() {

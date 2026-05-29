@@ -282,9 +282,17 @@
         }
     });
 
-    // ===== KÊU SỐ -> DỪNG NHẠC NỀN =====
-    btnCall.addEventListener('click', function() {
-        stopBgMusic();
-    });
+    // ===== KÊU SỐ -> GIẢM NHẠC NỀN =====
+btnCall.addEventListener('click', function() {
+
+    // Giảm nhỏ nhạc nền khi đọc số
+    bgMusic.volume = 0.05;
+
+    // Sau 4 giây tăng lại volume
+    setTimeout(() => {
+        bgMusic.volume = 0.2;
+    }, 4000);
+
+});
 
 })();

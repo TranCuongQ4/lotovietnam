@@ -8,7 +8,7 @@ const BAOAN = {
     // === CẤU HÌNH ===
     folderPath: 'so/',
     totalFiles: 90,
-    extraFiles: ['nenloto.mp3'],
+    extraFiles: [],
     dbName: 'LotoSoundDB',
     dbVersion: 1,
     storeName: 'audioCache',
@@ -252,13 +252,7 @@ const BAOAN = {
         return audio;
     },
 
-    // Phát nhạc nền
-    async playBackground() {
-        const audio = await this.createAudio('nenloto.mp3');
-        audio.loop = true;
-        audio.play().catch(e => console.error('[BaoAn] Lỗi phát nhạc nền:', e));
-        return audio;
-    },
+    
 
     // Kiểm tra trạng thái cache
     async getCacheStatus() {

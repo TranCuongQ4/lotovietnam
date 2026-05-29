@@ -1,0 +1,392 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #c41e3a 0%, #8b0000 50%, #5c0011 100%);
+}
+
+.page {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.page.active {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.container {
+    width: 375px;
+    height: 667px;
+    position: relative;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-blink {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 3px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.current-number-display {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+#current-number {
+    font-size: 38px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+    min-width: 80px;
+    text-align: center;
+}
+
+/* ===== KHUNG SỐ ĐÃ RA - DÀI THÊM ĐỦ 90 SỐ ===== */
+.called-numbers-box {
+    width: 100%;
+    height: 360px;
+    background: #ffffff;
+    border: 3px solid #ffd700;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.called-numbers-header {
+    text-align: center;
+    font-weight: bold;
+    color: #8b0000;
+    font-size: 12px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #ffd700;
+    padding-bottom: 2px;
+}
+
+.called-numbers-list {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-content: flex-start;
+    padding: 2px;
+}
+
+.called-number {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #ff6b6b, #c41e3a);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.buttons-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    color: white;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-call {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    flex: 1;
+}
+
+.btn-pause {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #333;
+    flex: 1;
+}
+
+.btn-pause.paused {
+    animation: pause-blink 0.5s infinite;
+    background: linear-gradient(135deg, #ff6b6b, #c41e3a);
+    color: white;
+}
+
+@keyframes pause-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.btn-check {
+    background: linear-gradient(135deg, #17a2b8, #117a8b);
+    flex: 1;
+}
+
+.btn-ticket {
+    background: linear-gradient(135deg, #6f42c1, #5a32a3);
+    width: 100%;
+}
+
+.btn-huongdan {
+    background: linear-gradient(135deg, #20c997, #17a2b8);
+    flex: 1;
+}
+
+.btn-choilai {
+    background: linear-gradient(135deg, #fd7e14, #e8590c);
+    flex: 1;
+}
+
+.btn-back {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+    align-self: flex-start;
+    margin-bottom: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* ===== TRANG GIẤY DÒ ===== */
+.ticket-title {
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 3px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.ticket-container {
+    width: 100%;
+    height: 580px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.ticket-frame {
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    padding: 3px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ticket-row {
+    display: flex;
+    gap: 2px;
+    flex: 1;
+    min-height: 0;
+}
+
+.ticket-cell {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 11px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 0;
+    line-height: 1;
+}
+
+.ticket-cell.empty {
+    background: rgba(255,255,255,0.15);
+    cursor: default;
+}
+
+.ticket-cell:not(.empty):hover {
+    background: rgba(255,255,255,1);
+    transform: scale(1.05);
+}
+
+.ticket-cell.marked {
+    position: relative;
+    background: rgba(255,255,255,0.3);
+}
+
+.ticket-cell.marked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: #ff0000;
+    transform: rotate(-45deg);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+.ticket-cell.marked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: #ff0000;
+    transform: rotate(45deg);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 320px;
+    text-align: center;
+    border: 3px solid #ffd700;
+}
+
+.modal-content h3 {
+    color: #8b0000;
+    margin-bottom: 15px;
+}
+
+.check-inputs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.check-inputs input {
+    width: 50px;
+    height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #ffd700;
+    border-radius: 5px;
+}
+
+.btn-do {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    margin-right: 10px;
+}
+
+.btn-close {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.modal-result {
+    background: #c41e3a;
+    border: 4px solid #ffd700;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    min-width: 250px;
+}
+
+.result-text {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.btn-ok {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #8b0000;
+    padding: 10px 40px;
+}
+
+/* ===== FOOTER ===== */
+.game-footer {
+    width: 100%;
+    text-align: center;
+    color: #ffd700;
+    font-size: 10px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-top: 2px;
+    padding: 2px 0;
+}
+
+@media (max-height: 700px) {
+    .called-numbers-box {
+        height: 350px;
+    }
+    .ticket-container {
+        height: 560px;
+    }
+}

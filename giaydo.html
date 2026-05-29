@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Giấy Dò Lô Tô</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS riêng cho trang Giấy Dò - THU NHỎ */
+        .giaydo-container {
+            width: 375px;
+            height: 667px;
+            position: relative;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .giaydo-title {
+            color: #ffd700;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .giaydo-ticket-container {
+            width: 100%;
+            height: 580px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="page active">
+        <div class="giaydo-container">
+            <button id="btn-close-tab" class="btn btn-back">✕ Đóng Tab</button>
+            
+            <div class="giaydo-title">Giấy Dò Lô Tô</div>
+            
+            <div id="ticket-container" class="giaydo-ticket-container"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('selectstart', (e) => e.preventDefault());
+        document.addEventListener('copy', (e) => e.preventDefault());
+        document.addEventListener('cut', (e) => e.preventDefault());
+        
+        const COLORS = ['#28a745', '#c41e3a', '#ffc107', '#007bff', '#6f42c1'];
+        
+        function getColumnIndex(num) {
+            if (num >= 1 && num <= 9) return 0;
+            if (num >= 10 && num <= 19) return 1;
+            if (num >= 20 && num <= 29) return 2;
+            if (num >= 30 && num <= 39) return 3;
+            if (num >= 40 && num <= 49) return 4;
+            if (num >= 50 && num <= 59) return 5;
+            if (num >= 60 && num <= 69) return 6;
+            if (num >= 70 && num <= 79) return 7;
+            if (num >= 80 && num <= 90) return 8;
+            return 0;
+        }
+        
+        function generateTicket() {
+            const container = document.getElementById('ticket-container');
+            container.innerHTML = '';
+            
+            const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+            
+            let allNumbers = Array.from({length: 90}, (_, i) => i + 1);
+            
+            for (let i = allNumbers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allNumbers[i], allNumbers[j]] = [allNumbers[j], allNumbers[i]];
+            }
+            
+            let rowData = [];
+            
+            for (let row = 0; row < 18; row++) {
+                let rowNumbers = [];
+                let usedRanges = new Set();
+                
+                while (rowNumbers.length < 5) {
+                    let found = false;
+                    
+                    for (let i = 0; i < allNumbers.length; i++) {
+                        const num = allNumbers[i];
+                        const colIndex = getColumnIndex(num);
+                        
+                        if (!usedRanges.has(colIndex)) {
+                            rowNumbers.push({ num: num, col: colIndex });
+                            usedRanges.add(colIndex);
+                            allNumbers.splice(i, 1);
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!found && allNumbers.length > 0) {
+                        const num = allNumbers.shift();
+                        const colIndex = getColumnIndex(num);
+                        rowNumbers.push({ num: num, col: colIndex });
+                        usedRanges.add(colIndex);
+                    }
+                    
+                    if (allNumbers.length === 0) break;
+                }
+                
+                rowNumbers.sort((a, b) => a.col - b.col);
+                rowData.push(rowNumbers);
+            }
+            
+            for (let frame = 0; frame < 2; frame++) {
+                const frameDiv = document.createElement('div');
+                frameDiv.className = 'ticket-frame';
+                frameDiv.style.backgroundColor = color + '30';
+                frameDiv.style.borderColor = '#ffffff';
+                
+                for (let row = 0; row < 9; row++) {
+                    const globalRowIndex = frame * 9 + row;
+                    const rowNumbers = rowData[globalRowIndex] || [];
+                    
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'ticket-row';
+                    
+                    const colMap = {};
+                    rowNumbers.forEach(item => {
+                        colMap[item.col] = item.num;
+                    });
+                    
+                    for (let col = 0; col < 9; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'ticket-cell';
+                        
+                        if (colMap[col] !== undefined) {
+                            cell.textContent = colMap[col];
+                            cell.dataset.number = colMap[col];
+                            cell.addEventListener('click', function() {
+                                this.classList.toggle('marked');
+                            });
+                        } else {
+                            cell.classList.add('empty');
+                        }
+                        
+                        rowDiv.appendChild(cell);
+                    }
+                    
+                    frameDiv.appendChild(rowDiv);
+                }
+                
+                container.appendChild(frameDiv);
+            }
+        }
+        
+        document.getElementById('btn-close-tab').addEventListener('click', function() {
+            window.close();
+        });
+        
+        generateTicket();
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Trò Chơi Lô Tô</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- TRANG CHÍNH -->
+    <div id="main-page" class="page active">
+        <div class="container">
+            <h1 class="title-blink">Trò Chơi Lô Tô</h1>
+            
+            <div class="current-number-display">
+                <span id="current-number">---</span>
+            </div>
+            
+            <div class="called-numbers-box">
+                <div class="called-numbers-header">Các Số Đã Ra</div>
+                <div id="called-numbers-list" class="called-numbers-list"></div>
+            </div>
+            
+            <div class="buttons-row">
+                <button id="btn-call" class="btn btn-call">Kêu Số</button>
+                <button id="btn-pause" class="btn btn-pause">Dừng Kêu</button>
+                <button id="btn-check" class="btn btn-check">Dò Số</button>
+            </div>
+            
+            <div class="buttons-row">
+                <!-- Mở Giấy Dò trong tab mới -->
+                <a href="giaydo.html" target="_blank" class="btn btn-ticket" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">Giấy Dò</a>
+            </div>
+            
+            <div class="buttons-row">
+                <button id="btn-huongdan" class="btn btn-huongdan">Hướng Dẫn</button>
+                <button id="btn-choilai" class="btn btn-choilai">Chơi Lại</button>
+            </div>
+            
+            <div class="game-footer">
+                Thiết Kế Trần Cường - Zalo: 0907860662
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DÒ SỐ -->
+    <div id="check-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Nhập 5 Số Để Dò</h3>
+            <div class="check-inputs">
+                <input type="number" id="num1" min="1" max="90" placeholder="Số 1">
+                <input type="number" id="num2" min="1" max="90" placeholder="Số 2">
+                <input type="number" id="num3" min="1" max="90" placeholder="Số 3">
+                <input type="number" id="num4" min="1" max="90" placeholder="Số 4">
+                <input type="number" id="num5" min="1" max="90" placeholder="Số 5">
+            </div>
+            <button id="btn-do-check" class="btn btn-do">Dò</button>
+            <button id="btn-close-check" class="btn btn-close">Đóng</button>
+        </div>
+    </div>
+
+    <!-- MODAL KẾT QUẢ -->
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-result">
+            <div id="result-text" class="result-text"></div>
+            <button id="btn-ok" class="btn btn-ok">OK</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="huongdan.js"></script>
+</body>
+</html>

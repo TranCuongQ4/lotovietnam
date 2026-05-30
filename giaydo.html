@@ -34,16 +34,94 @@
             gap: 3px;
             overflow: hidden;
         }
+
+        /* --- CSS BỔ SUNG THEO YÊU CẦU --- */
+        /* Định dạng hàng chứa 2 nút trên cùng */
+        .header-buttons {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        /* CSS cho bảng thông báo màu xanh ngọc */
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .custom-alert-box {
+            background-color: #008080; /* Màu xanh ngọc (Teal) */
+            color: #ffffff; /* Chữ trắng */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 280px;
+            font-family: Arial, sans-serif;
+        }
+
+        .custom-alert-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .custom-alert-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .custom-alert-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-confirm {
+            background-color: #ffffff;
+            color: #008080;
+        }
+
+        .btn-cancel {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
     <div class="page active">
         <div class="giaydo-container">
-            <button id="btn-close-tab" class="btn btn-back">✕ Đóng Tab</button>
+            <div class="header-buttons">
+                <button id="btn-close-tab" class="btn btn-back">✕ Đóng Tab</button>
+                <button id="btn-change-ticket" class="btn btn-back">🔄 Đổi Giấy Dò</button>
+            </div>
             
             <div class="giaydo-title">Giấy Dò Lô Tô</div>
             
             <div id="ticket-container" class="giaydo-ticket-container"></div>
+        </div>
+    </div>
+
+    <div id="custom-alert" class="custom-alert-overlay" style="display: none;">
+        <div class="custom-alert-box">
+            <div class="custom-alert-title">Bạn Muốn Thay Giấy Dò Mới À ?</div>
+            <div class="custom-alert-buttons">
+                <button id="alert-btn-confirm" class="custom-alert-btn btn-confirm">Dĩ Nhiên</button>
+                <button id="alert-btn-cancel" class="custom-alert-btn btn-cancel">Hok Nha</button>
+            </div>
         </div>
     </div>
 
@@ -53,7 +131,10 @@
         document.addEventListener('copy', (e) => e.preventDefault());
         document.addEventListener('cut', (e) => e.preventDefault());
         
-        const COLORS = ['#28a745', '#c41e3a', '#ffc107', '#007bff', '#6f42c1'];
+        const COLORS = [
+            '#28a745', '#c41e3a', '#ffc107', '#007bff', '#6f42c1',
+            '#e83e8c', '#fd7e14', '#20c997', '#17a2b8', '#6c757d'
+        ];
         
         function getColumnIndex(num) {
             if (num >= 1 && num <= 9) return 0;
@@ -98,10 +179,8 @@
                 let availableCols = columns.map((col, index) => ({
                     index: index,
                     count: col.length
-                })).filter(c => c.count > 0); // Chỉ lấy cột còn số
+                })).filter(c => c.count > 0);
                 
-                // Sắp xếp cột giảm dần theo số lượng số còn lại để ưu tiên lấy cột nhiều số trước
-                // Nếu số lượng bằng nhau thì xáo trộn ngẫu nhiên để đảm bảo tính tự nhiên của Lô Tô
                 availableCols.sort((a, b) => {
                     if (b.count !== a.count) {
                         return b.count - a.count;
@@ -109,24 +188,21 @@
                     return Math.random() - 0.5;
                 });
                 
-                // Lấy ra 5 cột tối ưu nhất cho hàng này
                 let selectedCols = availableCols.slice(0, 5);
                 
-                // Rút số từ 5 cột đã chọn
                 selectedCols.forEach(c => {
-                    let num = columns[c.index].pop(); // Rút 1 số ra khỏi cột
+                    let num = columns[c.index].pop();
                     rowNumbers.push({
                         num: num,
                         col: c.index
                     });
                 });
                 
-                // Sắp xếp các số trong hàng tăng dần theo thứ tự cột từ trái qua phải
                 rowNumbers.sort((a, b) => a.col - b.col);
                 rowData.push(rowNumbers);
             }
             
-            // 3. Phần hiển thị HTML (Giữ nguyên logic của bạn)
+            // 3. Phần hiển thị HTML
             for (let frame = 0; frame < 2; frame++) {
                 const frameDiv = document.createElement('div');
                 frameDiv.className = 'ticket-frame';
@@ -171,6 +247,21 @@
         
         document.getElementById('btn-close-tab').addEventListener('click', function() {
             window.close();
+        });
+
+        /* SỰ KIỆN NÚT ĐỔI GIẤY DÒ VÀ CUSTOM ALERT */
+        const customAlert = document.getElementById('custom-alert');
+
+        document.getElementById('btn-change-ticket').addEventListener('click', function() {
+            customAlert.style.display = 'flex';
+        });
+
+        document.getElementById('alert-btn-confirm').addEventListener('click', function() {
+            location.reload();
+        });
+
+        document.getElementById('alert-btn-cancel').addEventListener('click', function() {
+            customAlert.style.display = 'none';
         });
         
         generateTicket();

@@ -74,14 +74,14 @@ function playSound(number) {
     audioRetryTimeout = setTimeout(() => {
         const audio2 = new Audio(`so/${number}.mp3`);
         audio2.play().catch(e => console.log('Không thể phát âm thanh lần 2:', e));
-    }, 2000);
+    }, 3000);
 }
 
 function callNumber() {
     if (isPaused || availableNumbers.length === 0) {
         if (availableNumbers.length === 0) {
             isCalling = false;
-            btnCall.textContent = 'Hết Số';
+            btnCall.textContent = 'Hết Số Rồi';
         }
         return;
     }
@@ -107,10 +107,10 @@ function callNumber() {
             } else {
                 isCalling = false;
                 if (availableNumbers.length === 0) {
-                    btnCall.textContent = 'Hết Số';
+                    btnCall.textContent = 'Hết Số Rồi';
                 }
             }
-        }, 1000);
+        }, 1500);
     }, 6000);
 }
 

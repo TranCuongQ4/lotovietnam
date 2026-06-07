@@ -2,7 +2,8 @@
  * File: kinh.js
  * Tính năng: Kiểm tra thắng loto (đủ 5 số 1 hàng ngang)
  * Hiển thị bảng thông báo chớp nháy nền đỏ viền vàng chữ xanh, số nổi 3D nền đỏ chữ trắng
- * Nút OK xóa sạch dấu chéo hiện tại để chơi lại (không reload trang)
+ * NÚT OK: Xóa sạch dấu chéo hiện tại để chơi lại (không reload trang)
+ * NÚT HỦY: Bỏ chọn duy nhất số thứ 5 vừa bấm nhầm, giữ nguyên 4 số trước đó
  */
 
 (function () {
@@ -79,27 +80,50 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
+        /* Vùng chứa 2 nút hành động */
+        .win-buttons-group {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
         /* Nút OK */
         .win-btn-ok {
             background: linear-gradient(to bottom, #ffd700, #ffaa00);
             color: #000000;
             border: 2px solid #ffffff;
             border-radius: 8px;
-            padding: 10px 30px;
+            padding: 10px 25px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: transform 0.1s;
+            flex: 1;
         }
 
-        .win-btn-ok:active {
+        /* Nút Hủy kế bên nút OK */
+        .win-btn-cancel {
+            background: linear-gradient(to bottom, #aaaaaa, #666666);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+            flex: 1;
+        }
+
+        .win-btn-ok:active, .win-btn-cancel:active {
             transform: scale(0.95);
         }
     `;
     document.head.appendChild(styleNode);
 
-    // --- 2. TẠO CẤU TRÚC HTML CHO POPUP WIN (ẨN MẶC ĐỊNH) ---
+    // --- 2. TẠO CẤU TRÚC HTML CHO POPUP WIN (THÊM NÚT HỦY) ---
     const winOverlay = document.createElement('div');
     winOverlay.id = 'win-alert-popup';
     winOverlay.className = 'win-overlay';
@@ -109,45 +133,53 @@
         <div class="win-box">
             <div class="win-title">Chúc Mừng Bạn Đủ 5 Số Chiến Thắng Rồi Nha Dò Số Đi</div>
             <div id="win-balls-area" class="win-numbers-container"></div>
-            <button id="win-btn-submit" class="win-btn-ok">OK</button>
+            <div class="win-buttons-group">
+                <button id="win-btn-submit" class="win-btn-ok">OK</button>
+                <button id="win-btn-cancel" class="win-btn-cancel">Hủy</button>
+            </div>
         </div>
     `;
     document.body.appendChild(winOverlay);
 
     const winBallsArea = document.getElementById('win-balls-area');
     const winBtnSubmit = document.getElementById('win-btn-submit');
+    const winBtnCancel = document.getElementById('win-btn-cancel');
+
+    // Biến lưu vết ô số cuối cùng vừa bấm (số thứ 5) làm hiện bảng
+    let lastClickedCell = null;
 
     // --- 3. LẮP SỰ KIỆN THEO DÕI CLICK VÀO CÁC Ô SỐ ---
-    // Sử dụng Event Delegation để lắng nghe sự kiện từ `#ticket-container`
     const ticketContainer = document.getElementById('ticket-container');
     
     if (ticketContainer) {
         ticketContainer.addEventListener('click', function (e) {
-            // Chờ một chút nhỏ (10ms) để class 'marked' được toggle xong từ file gốc
+            // Xác định xem phần tử vừa click có phải ô số hợp lệ không
+            const targetCell = e.target.closest('.ticket-cell:not(.empty)');
+            if (targetCell) {
+                // Nếu ô đó sau khi click có class 'marked' tức là người dùng vừa chọn nó
+                if (targetCell.classList.contains('marked')) {
+                    lastClickedCell = targetCell;
+                }
+            }
+            // Chờ 10ms để trạng thái toggle ổn định rồi chạy hàm kiểm tra trúng thưởng
             setTimeout(checkWinningRows, 10);
         });
     }
 
     // --- 4. HÀM KIỂM TRA ĐỦ 5 DẤU CHÉO TRÊN 1 HÀNG ---
     function checkWinningRows() {
-        // Lấy tất cả các hàng đang có trên giao diện (.ticket-row)
         const rows = document.querySelectorAll('.ticket-row');
         
         rows.forEach(row => {
-            // Tìm các ô có số (không phải ô trống 'empty') nằm trong hàng này
             const validCells = row.querySelectorAll('.ticket-cell:not(.empty)');
-            // Lọc ra các ô đã được đánh dấu nhân (.marked)
             const markedCells = row.querySelectorAll('.ticket-cell.marked');
 
-            // Nếu số lượng ô được chọn bằng đúng số lượng ô số của hàng (đủ 5 số)
             if (markedCells.length === 5 && validCells.length === 5) {
-                // Thu thập các số trúng thưởng từ thuộc tính `dataset.number` hoặc `textContent`
                 let winningNumbers = [];
                 markedCells.forEach(cell => {
                     winningNumbers.push(cell.getAttribute('data-number') || cell.textContent.trim());
                 });
 
-                // Hiển thị các số lên vòng tròn nổi 3D trong bảng thông báo
                 showWinPopup(winningNumbers);
             }
         });
@@ -155,10 +187,8 @@
 
     // --- 5. HÀM HIỂN THỊ POPUP ---
     function showWinPopup(numbers) {
-        // Xóa các quả bóng cũ nếu có
         winBallsArea.innerHTML = '';
 
-        // Tạo các quả bóng 3D mới tương ứng với các số trúng
         numbers.forEach(num => {
             const ball = document.createElement('div');
             ball.className = 'win-ball';
@@ -166,21 +196,31 @@
             winBallsArea.appendChild(ball);
         });
 
-        // Hiện bảng thông báo lên
         winOverlay.style.display = 'flex';
     }
 
     // --- 6. SỰ KIỆN KHI NHẤN NÚT "OK" ---
     winBtnSubmit.addEventListener('click', function () {
-        // 1. Ẩn bảng thông báo đi
         winOverlay.style.display = 'none';
 
-        // 2. Tìm tất cả các ô đang có dấu chéo (.marked) và xóa class 'marked' đi
+        // Tìm tất cả các ô trên vé đang có dấu chéo và xóa sạch để chơi ván mới
         const allMarkedCells = document.querySelectorAll('.ticket-cell.marked');
         allMarkedCells.forEach(cell => {
             cell.classList.remove('marked');
         });
         
-        // Hoàn toàn không reload hay reset dãy số, chỉ làm sạch các dấu chéo!
+        lastClickedCell = null; // Reset bộ nhớ ô bấm nhầm
+    });
+
+    // --- 7. SỰ KIỆN KHI NHẤN NÚT "HỦY" (TÍNH NĂNG MỚI THEO YÊU CẦU) ---
+    winBtnCancel.addEventListener('click', function () {
+        winOverlay.style.display = 'none';
+
+        // Nếu có lưu vết ô vừa chọn nhầm cuối cùng, gỡ class 'marked' của riêng ô đó ra
+        if (lastClickedCell) {
+            lastClickedCell.classList.remove('marked');
+        }
+        
+        lastClickedCell = null; // Sử dụng xong thì reset bộ nhớ
     });
 })();
